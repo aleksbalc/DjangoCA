@@ -1,0 +1,45 @@
+/* styles.css */
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+.top-nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.top-nav a {
+    color: #fff;
+    text-decoration: none;
+    margin-right: 20px;
+}
+
+.left a {
+    font-weight: bold;
+}
+
+.right a {
+    float: right;
+}
+
+.content {
+    margin-top: 60px;
+    /* Adjust this value based on the height of your navigation bar */
+    padding: 20px;
+}
+
+.top-nav .right .username {
+    color: #ff8800;
+    /* Choose your desired color for the username */
+    font-weight: bold;
+    /* Make the username bold for emphasis */
+    margin-right: 40px;
+    /* Add some spacing to the right of the username */
+}

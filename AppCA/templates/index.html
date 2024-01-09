@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Your App{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1> Welcome to the Certification Authority webpage</h1>
+
+</div>
+{% if not user.is_authenticated %}
+<div class="content">
+    <br>
+    <h2>Please log in before proceeding further</h2>
+    <!-- Button for Register -->
+    <a href="{% url 'register' %}">
+        <button type="button">Register</button>
+    </a>
+
+    <!-- Button for Login -->
+    <a href="{% url 'login' %}">
+        <button type="button">Login</button>
+    </a>
+</div>
+{% endif %}
+{% endblock %}

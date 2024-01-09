@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block title %}No permission{% endblock %}
+
+{% block content %}
+<h1>You don't have permission to view this page.</h1>
+
+<p><a href="{{ referring_url }}">Go Back</a></p>
+{% endblock %}
