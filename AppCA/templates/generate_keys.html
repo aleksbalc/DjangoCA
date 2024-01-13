@@ -6,10 +6,16 @@
 
 
 {% if user.is_authenticated %}
-<h2>Your account doesn't have appropriate permissions.</h2>
-<a href="{{ referring_url }}" class="go-back-button">
-    <button type="button" class="go-back-button">&larr; Go Back</button>
-</a>
+
+<form method="post" action="{% url 'generate_keys' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Random Generator</button>
+</form>
+
+
+
+
 {% else %}
 <h2>Please log in to access this page</h2>
 <br>

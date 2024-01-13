@@ -23,8 +23,8 @@
             {% if user.is_authenticated %}
             <a href="{% url 'logout' %}">Log Out</a>
 
-            <a href="{% url 'index' %}">Manage Nodes</a>
-            <a href="{% url 'index' %}">Generate Keys</a>
+            <a href="{% url 'manage_nodes' %}">Manage Nodes</a>
+            <a href="{% url 'generate_keys' %}">Generate Keys</a>
             {% if user|yesno:"yes,no" %} <!-- Check if user is staff -->
             <a href="{% url 'add_node' %}">Add Node</a>
             {% else %}
@@ -32,8 +32,9 @@
             {% endif %}
             <span class="username">{{ user.username }}</span>
             {% else %}
+
+
             <a href="{% url 'login' %}">Log In</a>
-            <a href="{% url 'register' %}">Register</a>
             {% endif %}
         </div>
     </div>

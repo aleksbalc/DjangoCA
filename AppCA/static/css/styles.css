@@ -43,3 +43,21 @@ body {
     margin-right: 40px;
     /* Add some spacing to the right of the username */
 }
+
+.login-button,
+.go-back-button {
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+    /* Set a fixed width to make both buttons the same size */
+    width: 120px;
+    /* Set a fixed height to make both buttons the same size */
+    height: 40px;
+}
+
+.login-button button
+.go-back-button button {
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+}

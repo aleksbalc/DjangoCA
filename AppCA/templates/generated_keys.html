@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Success Page{% endblock %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+<h2>Key Generation Success</h2>
+
+<h3>Key Generation Details:</h3>
+<p>ID: {{ key_generation.id }}</p>
+<p>Number of Keys Created: {{ key_generation.number_of_keys_created }}</p>
+<p>Date of Generation: {{ key_generation.created_at }}</p>
+
+<h3>Generated Nodes:</h3>
+<table border="1">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>N_ID</th>
+            <th>Generation ID</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for node in generated_nodes %}
+        <tr>
+            <td>{{ node.id }}</td>
+            <td>{{ node.N_ID }}</td>
+            <td>{{ node.generation_id.id }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<br><br>
+<a href="{% url 'index' %}" class="go-back-button">
+    <button type="button" class="go-back-button">&larr; Main page</button>
+</a>
+{% else %}
+<h2>Please log in to access this page</h2>
+<br>
+<a href="{% url 'login' %}" class="login-button">
+    <button type="button" class="login-button">&#128274; Login</button>
+</a>
+<br><br>
+<a href="{{ referring_url }}" class="go-back-button">
+    <button type="button" class="go-back-button">&larr; Go Back</button>
+</a>
+{% endif %}
+
+{% endblock %}

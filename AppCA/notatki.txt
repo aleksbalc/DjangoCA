@@ -1,0 +1,7 @@
+1) Generowanie w CA nazw N (nazwy nie mają znaczenia, do 4 znaków)
+
+2) W bazie ma być przechowywany N_ID, numer sprzętowy i state
+
+3) Wysyłanie wszystkich N_ID do nowych nodów.
+
+4) Czy wysyłane mają być wszystkim nodom, czy tylko konkretnym 

@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Nodes{% endblock %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+<h2>Manage Nodes</h2>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>N_ID</th>
+            <th>NTAG</th>
+            <th>NNSK</th>
+            <th>NNSKiv</th>
+            <th>NNSKsign</th>
+            <th>HMAC</th>
+            <th>Device ID</th>
+            <th>Generation ID</th>
+            <th>State</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for node in nodes %}
+        <tr>
+            <td>{{ node.id }}</td>
+            <td>{{ node.N_ID }}</td>
+            <td>{{ node.NTAG }}</td>
+            <td>{{ node.NNSK }}</td>
+            <td>{{ node.NNSKiv }}</td>
+            <td>{{ node.NNSKsign }}</td>
+            <td>{{ node.HMAC }}</td>
+            <td>{{ node.device_id }}</td>
+            <td>{{ node.generation_id.id }}</td>
+            <td>{{ node.get_state_display }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+<h2>Please log in to access this page</h2>
+<br>
+<a href="{% url 'login' %}" class="login-button">
+    <button type="button" class="login-button">&#128274; Login</button>
+</a>
+<br><br>
+<a href="{{ referring_url }}" class="go-back-button">
+    <button type="button" class="go-back-button">&larr; Go Back</button>
+</a>
+{% endif %}
+
+{% endblock %}
