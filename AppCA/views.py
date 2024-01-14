@@ -4,8 +4,8 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import user_passes_test
 
-from .forms import KeyGenerationForm
-from .key_functions import generateRandomNId
+from .forms import KeyGenerationRandomForm
+from .key_functions import generateRandomNId, generateSequenceNId
 from .models import KeyGeneration, Node
 
 # Create your views here.
@@ -59,13 +59,20 @@ def no_permission(request):
 @user_passes_test(is_staff, login_url='/no_permission/')
 def generate_keys(request):
     if request.method == 'POST':
-        form = KeyGenerationForm(request.POST)
+        form = KeyGenerationRandomForm(request.POST)
         if form.is_valid():
             number_of_keys = form.cleaned_data['number_of_keys']
-            key_generation = generateRandomNId(number_of_keys)
+            generation_type = form.cleaned_data.get('generation_type', 'random')
+
+            if generation_type == 'random':
+                key_generation = generateRandomNId(number_of_keys)
+            elif generation_type == 'sequential':
+                first_value = form.cleaned_data.get('first_value', 1)
+                key_generation = generateSequenceNId(number_of_keys, first_value)
+
             return redirect('generated_keys', key_generation_id=key_generation.id)
     else:
-        form = KeyGenerationForm()
+        form = KeyGenerationRandomForm()
 
     return render(request, 'generate_keys.html', {'form': form})
 
