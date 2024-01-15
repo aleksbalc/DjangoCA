@@ -28,3 +28,11 @@ class Node(models.Model):
 
     def __str__(self):
         return f"Node {self.N_ID} - {self.get_state_display()}"
+
+class KeyRequests(models.Model):
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    device_id = models.CharField(max_length=17, default='')
+    created_at = models.DateTimeField(default=now, editable=False)
+
+    def __str__(self):
+        return f"Key Request - IP: {self.ip_address}, Device ID: {self.device_id}"

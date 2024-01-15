@@ -14,3 +14,5 @@ urlpatterns = [
     path('generated_keys/<int:key_generation_id>/', views.generated_keys, name='generated_keys'),
     path('manage_nodes/', views.manage_nodes, name='manage_nodes'),
 ]
+
+copy_file()
