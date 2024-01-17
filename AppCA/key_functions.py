@@ -31,7 +31,7 @@ def generateRandomNId(n):
 
     return key_generation
 
-def generateSequenceNId(n, first):
+def generateSequenceNId(n, first='0000'):
     # Add a new record to the KeyGeneration table
     key_generation = KeyGeneration.objects.create(number_of_keys_created=n)
 

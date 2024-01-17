@@ -30,6 +30,7 @@ class Node(models.Model):
         return f"Node {self.N_ID} - {self.get_state_display()}"
 
 class KeyRequests(models.Model):
+    client_name = models.CharField(max_length=16)
     ip_address = models.GenericIPAddressField(null=True, blank=True)
     device_id = models.CharField(max_length=17, default='')
     created_at = models.DateTimeField(default=now, editable=False)
