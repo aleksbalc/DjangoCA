@@ -13,12 +13,9 @@
             <th>ID</th>
             <th>N_ID</th>
             <th>NTAG</th>
-            <th>NNSK</th>
-            <th>NNSKiv</th>
-            <th>NNSKsign</th>
             <th>HMAC</th>
             <th>Device ID</th>
-            <th>Generation ID</th>
+            <th>Key set ID</th>
             <th>State</th>
         </tr>
     </thead>
@@ -28,12 +25,9 @@
             <td>{{ node.id }}</td>
             <td>{{ node.N_ID }}</td>
             <td>{{ node.NTAG }}</td>
-            <td>{{ node.NNSK }}</td>
-            <td>{{ node.NNSKiv }}</td>
-            <td>{{ node.NNSKsign }}</td>
             <td>{{ node.HMAC }}</td>
             <td>{{ node.device_id }}</td>
-            <td>{{ node.generation_id.id }}</td>
+            <td>{{ node.key_set_id.id }}</td>
             <td>{{ node.get_state_display }}</td>
         </tr>
         {% endfor %}

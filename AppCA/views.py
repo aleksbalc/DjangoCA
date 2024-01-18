@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseForbidden
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -5,10 +6,18 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import user_passes_test
 
 from .forms import KeyGenerationRandomForm
-from .key_functions import generateRandomNId, generateSequenceNId
+from .key_functions import generateRandomNId, generateSequenceNId, addNIdsFromFile
 from .models import KeyGeneration, Node
 
 # Create your views here.
+
+
+def handle_uploaded_file(f):
+   filename = os.path.basename(f.name)
+   with open('/path/to/save/' + filename, 'wb+') as destination:
+       for chunk in f.chunks():
+           destination.write(chunk)
+   return filename
 
 def is_staff(user):
     return user.groups.filter(name='staff').exists()
@@ -67,8 +76,9 @@ def generate_keys(request):
             if generation_type == 'random':
                 key_generation = generateRandomNId(number_of_keys)
             elif generation_type == 'sequential':
-                first_value = form.cleaned_data.get('first_value', 1)
+                first_value = form.cleaned_data.get('first_value', '0000')  # Set default to '0000'
                 key_generation = generateSequenceNId(number_of_keys, first_value)
+
 
             return redirect('generated_keys', key_generation_id=key_generation.id)
     else:
@@ -76,11 +86,17 @@ def generate_keys(request):
 
     return render(request, 'generate_keys.html', {'form': form})
 
+def handle_uploaded_file(file):
+    # Add this function if not already present
+    with open(file.name, 'wb+') as destination:
+        for chunk in file.chunks():
+            destination.write(chunk)
+    return file.name
 
 @user_passes_test(is_staff, login_url='/no_permission/')
 def generated_keys(request, key_generation_id):
     key_generation = KeyGeneration.objects.get(pk=key_generation_id)
-    generated_nodes = Node.objects.filter(generation_id=key_generation)
+    generated_nodes = Node.objects.filter(key_set_id=key_generation)
 
     context = {
         'key_generation': key_generation,

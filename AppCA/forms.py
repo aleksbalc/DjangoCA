@@ -21,3 +21,4 @@ class KeyGenerationRandomForm(forms.Form):
         min_value=0,
         widget=forms.NumberInput(attrs={'type': 'number', 'min': 0}),
     )
+

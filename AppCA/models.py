@@ -7,22 +7,20 @@ class KeyGeneration(models.Model):
 
 class Node(models.Model):
     N_ID = models.CharField(max_length=4)
-    NTAG = models.CharField(max_length=32, default='')
-    NNSK = models.CharField(max_length=16, default='')
-    NNSKiv = models.CharField(max_length=16, default='')
-    NNSKsign = models.CharField(max_length=16, default='')
-    HMAC = models.CharField(max_length=64, default='')  # Assuming HMAC is a SHA256 hash (64 characters)
+    NTAG = models.CharField(max_length=32, default='', blank=True)
+    HMAC = models.CharField(max_length=64, default='', blank=True)  # Assuming HMAC is a SHA256 hash (64 characters)
 
     # New columns
-    device_id = models.CharField(max_length=17, default='')  # Assuming MAC addresses are 17 characters long
-    generation_id = models.ForeignKey(KeyGeneration, on_delete=models.CASCADE, default=None)
+    device_id = models.CharField(max_length=17, default='', blank=True)  # Assuming MAC addresses are 17 characters long
+    key_set_id = models.ForeignKey(KeyGeneration, on_delete=models.CASCADE, default=None)
 
     # Node state
     STATE_CHOICES = [
-        ('unknown', 'Unknown'),
-        ('requires_key', 'Requires Key'),
-        ('ready_to_register', 'Ready to Register'),
+        ('id ready', 'ID ready'),
+        ('key ready', 'Key ready'),
+        ('ready to register', 'Ready to register'),
         ('registered', 'Registered'),
+        ('unknown', 'Unknown'),
     ]
     state = models.CharField(max_length=20, choices=STATE_CHOICES, default='unknown')
 

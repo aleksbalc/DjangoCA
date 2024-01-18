@@ -1,18 +1,26 @@
 import socket
 import threading
 import json
+import configparser
+import os
 from getmac import get_mac_address
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from AppCA.models import KeyRequests
 
+
+current_file_directory = os.path.dirname(os.path.realpath(__file__))
+config_file_path = os.path.join(current_file_directory, '..', '..', 'ca_config.ini')
+config = configparser.ConfigParser()
+config.read(config_file_path)
+
 # Set your Django app's IP address and port
-DJANGO_IP = '127.0.0.1'
-DJANGO_PORT = 8000  # Use the port where your Django app is running
+DJANGO_IP = config['ca']['ip']
+DJANGO_PORT = config['ca']['web_port']  # Use the port where your Django app is running
 
 # Set the listener IP address and port
-LISTENER_IP = '127.0.0.1'  # Listen on all available network interfaces
-LISTENER_PORT = 8888  # Choose a different port for the listener
+LISTENER_IP = config['ca']['ip']  # Listen on all available network interfaces
+LISTENER_PORT = config['ca']['listener_port']  # Choose a different port for the listener
 
 class Command(BaseCommand):
     def handle(self, *args, **options):

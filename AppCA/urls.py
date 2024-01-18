@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
-from .copy_file import copy_file
-from .key_functions import getAvailableNodes
+from .copy_file import copy_file_ks
+from .key_functions import getNodeFile
 
 urlpatterns = [
     path('', views.index, name='index'), 

@@ -19,7 +19,7 @@ def scp_transfer(local_path, remote_path, hostname, port, username, password=Non
 
     transport.close()
 
-def copy_file():
+def copy_file_ks():
 # Example usage:
     # Get the absolute path of the static directory
     script_dir = os.path.dirname(os.path.abspath(__file__))
