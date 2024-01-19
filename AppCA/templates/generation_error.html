@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}No permission{% endblock %}
+
+{% block content %}
+
+
+{% if user.is_authenticated %}
+
+<h1>Error</h1>
+<p>{{ error_message }}</p>
+<br>
+<a href="{% url 'generate_keys' %}" class="login-button">
+    <button type="button" class="login-button">Go back</button>
+</a>
+
+{% else %}
+<h2>Please log in to access this page</h2>
+<br>
+<a href="{% url 'login' %}" class="login-button">
+    <button type="button" class="login-button">&#128274; Login</button>
+</a>
+<br><br>
+<a href="{{ referring_url }}" class="go-back-button">
+    <button type="button" class="go-back-button">&larr; Go Back</button>
+</a>
+{% endif %}
+
+
+{% endblock %}
