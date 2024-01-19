@@ -7,13 +7,17 @@ def generateRandomNId(n):
     # Add a new record to the KeyGeneration table
     key_generation = KeyGeneration.objects.create(number_of_keys_created=n)
 
-    # Generate n random strings of 4 numbers
     generated_ids = set()
+
+    # Generate n unique random strings of 4 numbers
     while len(generated_ids) < n:
-        generated_ids.add(str(random.randint(0000, 9999)))
+        new_id = str(random.randint(0, 9999)).zfill(4)  # Ensure the ID is 4 digits with leading zeros
+        if not Node.objects.filter(N_ID=new_id).exists() and new_id not in generated_ids:
+            # ID is unique, add to the set
+            generated_ids.add(new_id)
 
     with open("node_desc_id.txt", 'w') as file:
-            file.write('\n'.join(generated_ids))
+        file.write('\n'.join(generated_ids))
 
     # Add the generated strings to the Node table
     for generated_id in generated_ids:
@@ -28,9 +32,18 @@ def generateRandomNId(n):
 
     return key_generation
 
-def generateSequenceNId(n,  first='0000'):
+
+def generateSequenceNId(n, first='0000'):
     if first is None:
         first = '0000'
+    
+    # Check if any of the N_IDs in the sequence already exist in the database
+    existing_ids = Node.objects.filter(N_ID__in=[str((int(first) + i) % 10000).zfill(4) for i in range(n)])
+    
+    if existing_ids.exists():
+        # Return a tuple with key generation and existing N_IDs
+        return None, list(existing_ids.values_list('N_ID', flat=True))
+
     # Add a new record to the KeyGeneration table
     key_generation = KeyGeneration.objects.create(number_of_keys_created=n)
 
@@ -40,7 +53,6 @@ def generateSequenceNId(n,  first='0000'):
     with open("node_desc_id.txt", 'w') as file:
         # Write the generated IDs to the file
         file.write('\n'.join(map(lambda x: str(x).zfill(4), generated_ids)))
-
 
     for generated_id in generated_ids:
         node = Node.objects.create(
@@ -52,7 +64,7 @@ def generateSequenceNId(n,  first='0000'):
             state="ID ready"
         )
 
-    return key_generation
+    return key_generation, None
 
 def addNIdsFromFile(filename):
    # Open the file and read the content

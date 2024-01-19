@@ -77,7 +77,14 @@ def generate_keys(request):
                 key_generation = generateRandomNId(number_of_keys)
             elif generation_type == 'sequential':
                 first_value = form.cleaned_data.get('first_value', '0000')  # Set default to '0000'
-                key_generation = generateSequenceNId(number_of_keys, first_value)
+                key_generation, existing_ids = generateSequenceNId(number_of_keys, first_value)
+
+            if key_generation is not None:
+                return redirect('generated_keys', key_generation_id=key_generation.id)
+            else:
+                # Pass existing_ids to the error page template
+                error_message = "The sequence cannot be added. The following N_IDs already exist in the database: " + ', '.join(existing_ids)
+                return render(request, 'generation_error.html', {'error_message': error_message})
 
 
             return redirect('generated_keys', key_generation_id=key_generation.id)
@@ -110,3 +117,6 @@ def manage_nodes(request):
     nodes = Node.objects.all()
     context = {'nodes': nodes}
     return render(request, 'manage_nodes.html', context)
+
+
+

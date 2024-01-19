@@ -6,7 +6,7 @@ class KeyGeneration(models.Model):
     number_of_keys_created = models.IntegerField(default=0)
 
 class Node(models.Model):
-    N_ID = models.CharField(max_length=4)
+    N_ID = models.CharField(max_length=4, unique=True)
     NTAG = models.CharField(max_length=32, default='', blank=True)
     HMAC = models.CharField(max_length=64, default='', blank=True)  # Assuming HMAC is a SHA256 hash (64 characters)
 
