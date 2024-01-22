@@ -1,16 +1,23 @@
 /* styles.css */
 body {
-    margin: 0;
-    font-family: 'Arial', sans-serif;
+    display: flex;
+    flex-direction: column;
+    margin: 0px;
+    min-height: 100vh;
 }
-
+.content {
+    flex: 1 0 auto;
+}
 .top-nav {
     position: fixed;
     top: 0;
     width: 100%;
     background-color: #333;
     color: #fff;
-    padding: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-right: 30px;
+    padding-left: 15px;
     display: flex;
     justify-content: space-between;
 }
@@ -31,17 +38,13 @@ body {
 
 .content {
     margin-top: 60px;
-    /* Adjust this value based on the height of your navigation bar */
     padding: 20px;
 }
 
 .top-nav .right .username {
     color: #ff8800;
-    /* Choose your desired color for the username */
     font-weight: bold;
-    /* Make the username bold for emphasis */
     margin-right: 40px;
-    /* Add some spacing to the right of the username */
 }
 
 .login-button,
@@ -49,9 +52,7 @@ body {
     padding: 5px 10px;
     font-size: 16px;
     cursor: pointer;
-    /* Set a fixed width to make both buttons the same size */
     width: 120px;
-    /* Set a fixed height to make both buttons the same size */
     height: 40px;
 }
 
@@ -60,4 +61,53 @@ body {
     padding: 5px 10px;
     font-size: 16px;
     cursor: pointer;
+}
+
+.footer {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    flex-shrink: 0;
+}
+
+.footer h5.adjusted-margin {
+    margin: 5px;
+}
+
+.generation-parent {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: nowrap;
+}
+
+.generation-container {
+    width: 30%;
+    margin-right: 20px;
+}
+
+.center-table {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 40px;
+}
+
+table {
+    width: 80%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 15px;
+    text-align: center;
+}
+
+th {
+    background-color: #f2f2f2;
 }

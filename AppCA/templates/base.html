@@ -16,24 +16,21 @@
     <!-- Top Navigation Bar -->
     <div class="top-nav">
         <div class="left">
-            <a href="{% url 'index' %}">Centrum autoryzacji</a>
+            <a href="{% url 'index' %}">Authorization Center</a>
         </div>
         <div class="right">
 
             {% if user.is_authenticated %}
             <a href="{% url 'logout' %}">Log Out</a>
-
-            <a href="{% url 'manage_nodes' %}">Manage Nodes</a>
-            <a href="{% url 'generate_keys' %}">Generate Keys</a>
-            {% if user|yesno:"yes,no" %} <!-- Check if user is staff -->
-            <a href="{% url 'add_node' %}">Add Node</a>
-            {% else %}
-            <a href="{% url 'no_permission' %}">Add Node</a>
-            {% endif %}
+            <a href="{% url 'manage_nodes' %}">View Nodes</a>
+            <a href="{% url 'generate_keys' %}">Generate New N_IDs</a>
+            <!-- {% if user|yesno:"yes,no" %}  -->
+            <!-- <a href="{% url 'add_node' %}">Add Node</a> -->
+            <!-- {% else %} -->
+            <!-- <a href="{% url 'no_permission' %}">Add Node</a> -->
+            <!-- {% endif %} -->
             <span class="username">{{ user.username }}</span>
             {% else %}
-
-
             <a href="{% url 'login' %}">Log In</a>
             {% endif %}
         </div>
@@ -42,6 +39,14 @@
     <!-- Page content -->
     <div class="content">
         {% block content %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <h5 class="adjusted-margin">
+            Demonstrator centrum autoryzacji dla systemu generowania i odnawiania kluczy dla węzłów sieci IoT
+        </h5>
+        <h5 class="adjusted-margin">Aleksandra Balcerzak - Warszawa 2024</h5>
     </div>
 
 </body>

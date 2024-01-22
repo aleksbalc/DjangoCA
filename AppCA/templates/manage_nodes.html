@@ -6,34 +6,33 @@
 
 {% if user.is_authenticated %}
 <h2>Manage Nodes</h2>
-
-<table border="1">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>N_ID</th>
-            <th>NTAG</th>
-            <th>HMAC</th>
-            <th>Device ID</th>
-            <th>Key set ID</th>
-            <th>State</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for node in nodes %}
-        <tr>
-            <td>{{ node.id }}</td>
-            <td>{{ node.N_ID }}</td>
-            <td>{{ node.NTAG }}</td>
-            <td>{{ node.HMAC }}</td>
-            <td>{{ node.device_id }}</td>
-            <td>{{ node.key_set_id.id }}</td>
-            <td>{{ node.get_state_display }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
+<br>
+<p>This page allows the user to display fundamental data about Node registration sets.</p>
+<br><br>
+<div class="center-table">
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>N_ID</th>
+                <th>NTAG</th>
+                <th>Key set ID</th>
+                <th>State</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for node in nodes %}
+            <tr>
+                <td>{{ node.id }}</td>
+                <td>{{ node.N_ID }}</td>
+                <td>{{ node.NTAG }}</td>
+                <td>{{ node.key_set_id.id }}</td>
+                <td>{{ node.get_state_display }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% else %}
 <h2>Please log in to access this page</h2>
 <br>

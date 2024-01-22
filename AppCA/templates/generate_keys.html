@@ -6,15 +6,52 @@
 
 
 {% if user.is_authenticated %}
+<div class="generation-parent">
+    <div class="generation-container">
+        <h2>Random Generation</h2>
+        <p>
+            Use the random generator if you want to generate random N_IDs. You can generate between 1 and 100 N_IDs.
+        </p>
+    </div>
+    <div class="generation-container">
+        <h2>Sequential Generation</h2>
+        <p>
+            Use the sequential generator if you want to generate N_IDs in numerical order. You can generate between 1
+            and 100 N_IDs. You can also choose the first element of the sequence
+        </p>
+    </div>
+    <div class="generation-container">
+        <h2>File Upload</h2>
+        <p>Upload a .txt file consisting of N_IDs that you want to add to the database. Be sure that: </p>
+        <p> - There is no empty lines in the file </p>
+        <p> - Each N_ID is placed in a separate line </p>
+        <p> - All N_IDs consist of letters and numbers only </p>
+    </div>
+</div>
+<div class="generation-parent">
+    <div class="generation-container">
+        <form method="post" action="{% url 'generate_keys' %}">
+            {% csrf_token %}
+            {{ random_form.as_p }}
+            <button type="submit" name="generate_random">Generate Random Keys</button>
+        </form>
+    </div>
+    <div class="generation-container">
+        <form method="post" action="{% url 'generate_keys' %}">
+            {% csrf_token %}
+            {{ sequential_form.as_p }}
+            <button type="submit" name="generate_sequential">Generate Sequential Keys</button>
+        </form>
+    </div>
+    <div class="generation-container">
+        <form method="post" action="{% url 'generate_keys' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ file_upload_form.as_p }}
+            <button type="submit" name="upload_file">Upload File</button>
+        </form>
+    </div>
 
-<form method="post" action="{% url 'generate_keys' %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Generate Keys</button>
-</form>
-
-
-
+</div>
 {% else %}
 <h2>Please log in to access this page</h2>
 <br>

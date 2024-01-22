@@ -5,23 +5,14 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import user_passes_test
 
-from .forms import KeyGenerationRandomForm
+from .forms import KeyGenerationRandomForm, KeyGenerationSequentialForm, KeyGenerationFileUploadForm
 from .key_functions import generateRandomNId, generateSequenceNId, addNIdsFromFile
 from .models import KeyGeneration, Node
 
 # Create your views here.
 
-
-def handle_uploaded_file(f):
-   filename = os.path.basename(f.name)
-   with open('/path/to/save/' + filename, 'wb+') as destination:
-       for chunk in f.chunks():
-           destination.write(chunk)
-   return filename
-
 def is_staff(user):
     return user.groups.filter(name='staff').exists()
-
 
 def index(request):
     return render(request, 'index.html')
@@ -65,40 +56,56 @@ def no_permission(request):
     referring_url = request.META.get('HTTP_REFERER', '/')
     return render(request, 'no_permission.html', {'referring_url': referring_url})
 
+
 @user_passes_test(is_staff, login_url='/no_permission/')
 def generate_keys(request):
     if request.method == 'POST':
-        form = KeyGenerationRandomForm(request.POST)
-        if form.is_valid():
-            number_of_keys = form.cleaned_data['number_of_keys']
-            generation_type = form.cleaned_data.get('generation_type', 'random')
+        random_form = KeyGenerationRandomForm(request.POST)
+        sequential_form = KeyGenerationSequentialForm(request.POST)
+        file_upload_form = KeyGenerationFileUploadForm(request.POST, request.FILES)
 
-            if generation_type == 'random':
-                key_generation = generateRandomNId(number_of_keys)
-            elif generation_type == 'sequential':
-                first_value = form.cleaned_data.get('first_value', '0000')  # Set default to '0000'
-                key_generation, existing_ids = generateSequenceNId(number_of_keys, first_value)
+        if random_form.is_valid() and 'generate_random' in request.POST:
+            number_of_keys = random_form.cleaned_data['number_of_keys']
+            key_generation = generateRandomNId(number_of_keys)
+            return redirect('generated_keys', key_generation_id=key_generation.id)
+
+        elif sequential_form.is_valid() and 'generate_sequential' in request.POST:
+            number_of_elements = sequential_form.cleaned_data['number_of_keys']
+            first_element = sequential_form.cleaned_data.get('first_value', '0000')  # Set default to '0000'
+            key_generation, existing_ids = generateSequenceNId(number_of_elements, first_element)
 
             if key_generation is not None:
                 return redirect('generated_keys', key_generation_id=key_generation.id)
             else:
-                # Pass existing_ids to the error page template
                 error_message = "The sequence cannot be added. The following N_IDs already exist in the database: " + ', '.join(existing_ids)
                 return render(request, 'generation_error.html', {'error_message': error_message})
 
+        elif file_upload_form.is_valid() and 'upload_file' in request.POST:
+            uploaded_file = file_upload_form.cleaned_data['file']
+            key_generation, incorrect_ids, duplicate_ids = addNIdsFromFile(uploaded_file)
 
-            return redirect('generated_keys', key_generation_id=key_generation.id)
+            if key_generation is not None and not incorrect_ids and not duplicate_ids:
+                return redirect('generated_keys', key_generation_id=key_generation.id)
+            elif incorrect_ids:
+                error_message = "The sequence cannot be added. The following N_IDs are not in the correct format: " + ', '.join(map(str, incorrect_ids))
+                return render(request, 'generation_error.html', {'error_message': error_message})
+            elif duplicate_ids:
+                error_message = "The sequence cannot be added. The following N_IDs already exist in the database: " + ', '.join(map(str, duplicate_ids))
+                return render(request, 'generation_error.html', {'error_message': error_message})
+            else:
+                return render(request, 'generation_error.html', {'error_message': "An error occurred during node generation."})
+
     else:
-        form = KeyGenerationRandomForm()
+        random_form = KeyGenerationRandomForm()
+        sequential_form = KeyGenerationSequentialForm()
+        file_upload_form = KeyGenerationFileUploadForm()
 
-    return render(request, 'generate_keys.html', {'form': form})
+    return render(request, 'generate_keys.html', {
+        'random_form': random_form,
+        'sequential_form': sequential_form,
+        'file_upload_form': file_upload_form,
+    })
 
-def handle_uploaded_file(file):
-    # Add this function if not already present
-    with open(file.name, 'wb+') as destination:
-        for chunk in file.chunks():
-            destination.write(chunk)
-    return file.name
 
 @user_passes_test(is_staff, login_url='/no_permission/')
 def generated_keys(request, key_generation_id):

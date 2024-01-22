@@ -3,21 +3,53 @@
 {% block title %}Home - Your App{% endblock %}
 
 {% block content %}
-<div class="header">
-    <h1> Welcome to the Certification Authority webpage</h1>
 
-</div>
 {% if not user.is_authenticated %}
-<div class="content">
-    <br>
+<div>
     <h2>Please log in before proceeding further</h2>
 
     <!-- Button for Login -->
     <a href="{% url 'login' %}" class="login-button">
         <button type="button" class="login-button">&#128274; Login</button>
     </a>
+    <br> <br><br>
+    <h2> Welcome to the Certification Authority webpage</h2>
+    <p>This application was created to ensure secure data transfer necessary for registering a node in the MQTT network
+        between
+        nodes KS and N.</p>
+    <br>
+    <h3>Thesis task content:</h3>
+    <p>1. Familiarization with the KGR key generation and renewal system for IoT network nodes.</p>
+    <p>2. Development of the Authorization Center (CA) concept for the KGRD system meeting the requirements:</p>
+    <p>- Graphic application interface for CA management;</p>
+    <p>- Secure data exchange between CA and the key server of the KGRD system;</p>
+    <p>- Secure transfer of authentication data for clients of the KGRD system.</p>
+    <p>3. Development of a tool demonstrator.</p>
+    <p>4. Development of scenarios for presenting the demonstrator.</p>
+    <p>5. Preparation of a report on the implementation of individual scenarios.</p>
+    <br>
+    <p>This is a part of an engineering-level thesis project created in 2024.</p>
+    <br>
 </div>
 {% else %}
-
+<div>
+    <h2> Welcome to the Certification Authority webpage</h2>
+    <p>This application was created to ensure secure data transfer necessary for registering a node in the MQTT network
+        between
+        nodes KS and N.</p>
+    <br>
+    <h3>Thesis task content:</h3>
+    <p>1. Familiarization with the KGR key generation and renewal system for IoT network nodes.</p>
+    <p>2. Development of the Authorization Center (CA) concept for the KGRD system meeting the requirements:</p>
+    <p>- Graphic application interface for CA management;</p>
+    <p>- Secure data exchange between CA and the key server of the KGRD system;</p>
+    <p>- Secure transfer of authentication data for clients of the KGRD system.</p>
+    <p>3. Development of a tool demonstrator.</p>
+    <p>4. Development of scenarios for presenting the demonstrator.</p>
+    <p>5. Preparation of a report on the implementation of individual scenarios.</p>
+    <br>
+    <p>This is a part of an engineering-level thesis project created in 2024.</p>
+    <br>
+</div>
 {% endif %}
 {% endblock %}

@@ -66,37 +66,68 @@ def generateSequenceNId(n, first='0000'):
 
     return key_generation, None
 
-def addNIdsFromFile(filename):
-   # Open the file and read the content
-   with open(filename, 'r') as file:
-       content = file.read()
+def is_valid_n_id(n_id):
+    # Check if the N_ID is not longer than 4 characters
+    if len(n_id) > 4:
+        return False
 
-   # Split the content by spaces or new lines to get the N_IDs
-   n_ids = content.split()
+    # Check if the N_ID is not empty and consists only of alphanumeric characters
+    if not n_id.isalnum():
+        return False
 
-   # Create a new record to the KeyGeneration table
-   key_generation = KeyGeneration.objects.create(number_of_keys_created=len(n_ids))
+    return True
 
-   # Process each N_ID
-   for n_id in n_ids:
-       # If the N_ID has less than 4 characters, pad it with zeros on the left
-       if len(n_id) < 4:
-           n_id = n_id.zfill(4)
-       # If the N_ID has more than 4 characters, consider only the last four characters
-       else:
-           n_id = n_id[-4:]
+def addNIdsFromFile(uploaded_file):
+    # Read the content of the file line by line
+    with uploaded_file.open() as f:
+        lines = f.readlines()
 
-       # Add the N_ID to the Node table
-       node = Node.objects.create(
-           N_ID=n_id,
-           NTAG='', 
-           HMAC='',
-           device_id='', 
-           key_set_id=key_generation,
-           state="ID ready"
-       )
+    content = [line.decode('utf-8').strip() for line in lines]
 
-   return key_generation
+    all_nodes = set()
+    incorrect_ids = set()
+
+    # Process each line as an N_ID
+    for line in content:
+        n_id = line.strip()  # Remove leading and trailing whitespaces
+
+        # Validate the N_ID
+        if not is_valid_n_id(n_id):
+            incorrect_ids.add(n_id)
+            continue
+
+        # If the N_ID has less than 4 characters, pad it with zeros on the left
+        if len(n_id) < 4:
+            n_id = n_id.zfill(4)
+        # If the N_ID has more than 4 characters, consider only the last four characters
+        else:
+            n_id = n_id[-4:]
+
+        all_nodes.add(n_id)
+
+    if incorrect_ids:
+        return None, incorrect_ids, None
+
+    key_generation = KeyGeneration.objects.create(number_of_keys_created=len(all_nodes))
+
+    existing_ids = set(Node.objects.values_list('N_ID', flat=True))
+
+    duplicate_ids = all_nodes.intersection(existing_ids)
+
+    if duplicate_ids:
+        return None, None, duplicate_ids
+
+    for node_id in all_nodes:
+        node = Node.objects.create(
+            N_ID=node_id,
+            NTAG='',
+            HMAC='',
+            device_id='',
+            key_set_id=key_generation,
+            state="ID ready"
+        )
+
+    return key_generation, None, None
 
 def getNodeFile(n):
     try:
