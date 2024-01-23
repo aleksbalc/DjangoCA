@@ -1,4 +1,7 @@
 /* styles.css */
+html {
+    font-family: 'Arial', sans-serif;
+}
 body {
     display: flex;
     flex-direction: column;

@@ -1,9 +1,10 @@
 import paramiko
 import random
+import string
 from .models import KeyGeneration, Node
 from django.utils import timezone
 
-def generateRandomNId(n):
+def generateRandomNIdNumeral(n):
     # Add a new record to the KeyGeneration table
     key_generation = KeyGeneration.objects.create(number_of_keys_created=n)
 
@@ -32,6 +33,35 @@ def generateRandomNId(n):
 
     return key_generation
 
+def generateRandomNId(n):
+    # Add a new record to the KeyGeneration table
+    key_generation = KeyGeneration.objects.create(number_of_keys_created=n)
+
+    generated_ids = set()
+
+    # Generate n unique random strings of 4 characters (numbers and letters)
+    while len(generated_ids) < n:
+        new_id = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(4))
+        
+        if not Node.objects.filter(N_ID=new_id).exists() and new_id not in generated_ids:
+            # ID is unique, add to the set
+            generated_ids.add(new_id)
+
+    with open("node_desc_id.txt", 'w') as file:
+        file.write('\n'.join(generated_ids))
+
+    # Add the generated strings to the Node table
+    for generated_id in generated_ids:
+        node = Node.objects.create(
+            N_ID=generated_id,
+            NTAG='',  
+            HMAC='',
+            device_id='',  
+            key_set_id=key_generation,
+            state="ID ready"
+        )
+
+    return key_generation
 
 def generateSequenceNId(n, first='0000'):
     if first is None:
