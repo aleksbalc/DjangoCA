@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Node{% endblock %}
+
+{% block content %}
+
+
+{% if user.is_authenticated %}
+<div class="generation-parent">
+    <div class="generation-containter">
+        <h2>Key Request Form</h2>
+
+        <form method="post">
+            {% csrf_token %}
+            <label for="client_id">Select Client:</label>
+            <select name="client_id" id="client_id">
+                {% for client in clients_without_credentials %}
+                <option value="{{ client.id }}">{{ client.client_name }}</option>
+                {% endfor %}
+            </select>
+            <br>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+</div>
+
+<!-- Display all records in KeyRequests table with additional information -->
+<div class="key-requests-table">
+    <h2>All Key Requests</h2>
+    <div class="center-table">
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Client Name</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for key_request_id, key_request_info in key_request_status.items %}
+                <tr>
+                    <td>{{ key_request_id }}</td>
+                    <td>{{ key_request_info.client_name }}</td>
+                    <td>{{ key_request_info.created_at }}</td>
+                    <td>{{ key_request_info.status }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% else %}
+<h2>Please log in to access this page</h2>
+<br>
+<a href="{% url 'login' %}" class="login-button">
+    <button type="button" class="login-button">&#128274; Login</button>
+</a>
+<br><br>
+<a href="{{ referring_url }}" class="go-back-button">
+    <button type="button" class="go-back-button">&larr; Go Back</button>
+</a>
+{% endif %}
+
+
+{% endblock %}
