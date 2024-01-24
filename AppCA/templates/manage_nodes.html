@@ -13,7 +13,6 @@
     <table border="1">
         <thead>
             <tr>
-                <th>ID</th>
                 <th>N_ID</th>
                 <th>NTAG</th>
                 <th>Key set ID</th>
@@ -23,9 +22,14 @@
         <tbody>
             {% for node in nodes %}
             <tr>
-                <td>{{ node.id }}</td>
                 <td>{{ node.N_ID }}</td>
-                <td>{{ node.NTAG }}</td>
+                <td>
+                    {% if node.NTAG %}
+                    ************
+                    {% else %}
+                    {{ node.NTAG }}
+                    {% endif %}
+                </td>
                 <td>{{ node.key_set_id.id }}</td>
                 <td>{{ node.get_state_display }}</td>
             </tr>

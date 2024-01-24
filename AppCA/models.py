@@ -17,12 +17,11 @@ class Node(models.Model):
     # Node state
     STATE_CHOICES = [
         ('id ready', 'ID ready'),
-        ('key ready', 'Key ready'),
-        ('ready to register', 'Ready to register'),
-        ('registered', 'Registered'),
+        ('credentials available', 'Credentials available'),
+        ('credentials taken ', 'Credentials taken'),
         ('unknown', 'Unknown'),
     ]
-    state = models.CharField(max_length=20, choices=STATE_CHOICES, default='unknown')
+    state = models.CharField(max_length=32, choices=STATE_CHOICES, default='unknown')
 
     def __str__(self):
         return f"Node {self.N_ID} - {self.get_state_display()}"

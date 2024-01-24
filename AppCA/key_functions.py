@@ -162,7 +162,9 @@ def addNIdsFromFile(uploaded_file):
 
     return key_generation, None, None
 
+# This function creates a file for nodes that want to register to the kgrd (n_id, ntag, and a list of other nodes that can be connected)
 def getNodeFile(n):
+    print("getNodeFile")
     try:
         # Get the node which wants to get available connections and find it's generation id
         node = Node.objects.get(id=n)
@@ -179,11 +181,13 @@ def getNodeFile(n):
             file.write('\n'.join(node_ids))
 
     except Node.DoesNotExist:
-        print("WARNING: Such node not found in the system")
+        print("getNodeFile WARNING: Such node not found in the system")
         return
     return
 
+#This function creates and sends a file with new nodes to KS
 def createNIdGenerationFile(key_generation):
+    print("createNIdGenerationFile")
     script_dir = os.path.dirname(os.path.abspath(__file__))
     config_file_path = os.path.join(script_dir, 'ca_config.ini')
     config = configparser.ConfigParser()
@@ -201,8 +205,6 @@ def createNIdGenerationFile(key_generation):
     copy_file_ks(local_file_path)
     
 
-
-
 def scp_transfer(local_path, remote_path, hostname, port, username, password=None, private_key_path=None):
     transport = paramiko.Transport((hostname, int(port)))
 
@@ -213,6 +215,7 @@ def scp_transfer(local_path, remote_path, hostname, port, username, password=Non
         transport.connect(username=username, pkey=private_key)
 
     sftp = paramiko.SFTPClient.from_transport(transport)
+    print("local path: ", local_path, " remote_path: ", remote_path)
     sftp.put(local_path, remote_path)
     sftp.close()
 
@@ -243,5 +246,5 @@ def copy_file_ks(local_file_path):
 #     config_file_path = os.path.join(script_dir, 'ca_config.ini')
 
 
-# getNodeFile(9)
+# createNIdGenerationFile(57)
 
