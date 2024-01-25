@@ -1,0 +1,30 @@
+<!-- key_success.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}Success Page{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<h2>Success Page</h2>
+<p>{{ success_message }}</p>
+<!-- You can customize the message as needed -->
+
+<br><br>
+<a href="{% url 'index' %}" class="go-back-button">
+    <button type="button" class="go-back-button">&larr; Main page</button>
+</a>
+{% else %}
+<h2>Please log in to access this page</h2>
+<br>
+<a href="{% url 'login' %}" class="login-button">
+    <button type="button" class="login-button">&#128274; Login</button>
+</a>
+<br><br>
+<a href="{{ referring_url }}" class="go-back-button">
+    <button type="button" class="go-back-button">&larr; Go Back</button>
+</a>
+{% endif %}
+
+
+{% endblock %}

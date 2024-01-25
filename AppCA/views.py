@@ -1,5 +1,6 @@
 import os
 import paramiko
+import configparser
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseForbidden
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -7,8 +8,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import user_passes_test
 
 from .forms import KeyGenerationRandomForm, KeyGenerationSequentialForm, KeyGenerationFileUploadForm
-from .key_functions import generateRandomNId, generateSequenceNId, addNIdsFromFile, createNIdGenerationFile
+from .key_functions import generateRandomNId, generateSequenceNId, addNIdsFromFile, createNIdGenerationFile, getNodeFile
 from .models import KeyGeneration, Node, KeyRequests
+from .node_server import send_file
 
 # Create your views here.
 
@@ -132,6 +134,12 @@ def manage_nodes(request):
 
 @user_passes_test(is_staff, login_url='/no_permission/')
 def add_node(request):
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    config_file_path = os.path.join(script_dir, 'ca_config.ini')
+
+    config = configparser.ConfigParser()
+    config.read(config_file_path)
+
     # Get clients without credentials
     clients_without_credentials = KeyRequests.objects.exclude(device_id__in=Node.objects.values('device_id'))
 
@@ -148,38 +156,53 @@ def add_node(request):
             'created_at': key_request.created_at,
             'status': status,
         }
-    print(key_request_status)
+    #print(key_request_status)
     
     if request.method == 'POST':
+        
         # Process form submission
         selected_client_id = request.POST.get('client_id')
-
-        # Fetch the oldest Node record without credentials
-        node_to_assign = Node.objects.filter(state='id ready', key_set_id__number_of_keys_created__gt=0).order_by('id').first()
-
+        
+        # Fetch the oldest Node record without credentials and with a non-empty NTAG
+        node_to_assign = Node.objects.filter(state__iexact='id ready', key_set_id__number_of_keys_created__gt=0, NTAG__isnull=False).order_by('id').first()
+        # print("node to assign: ", node_to_assign)
+        # print("selected_client_id: ", selected_client_id)
         if node_to_assign and selected_client_id:
             # Assign credentials to the selected client
             selected_client = KeyRequests.objects.get(id=selected_client_id)
-            selected_client.device_id = node_to_assign.device_id
-            selected_client.save()
 
-            # Update Node record
+            # Generate file using getNodeFile function
+            getNodeFile(node_to_assign.id)
+
+            # Specify the path to the generated file
+            source_path = config['ca']['available_nodes']
+
+            # Specify the destination path on the remote server
+            destination_path = config['node']['remote_file_location']
+
+            # Specify the SSH connection details
+            remote_host = selected_client.ip_address
+            remote_port = int(config['node']['port'])
+            remote_username = config['node']['username']
+            private_key_path = config['ca']['private_key']
+
+            # Use send_file function to send the file to the remote server
+            send_file(source_path, destination_path, private_key_path, remote_host, remote_port, remote_username)
+            node_to_assign.device_id = selected_client.device_id
             node_to_assign.state = 'credentials taken'
             node_to_assign.save()
+            request.session['success_message'] = f"Keys for {node_to_assign.N_ID} have been successfully distributed to client {selected_client.client_name}."
 
-            # SSH logic (replace with your actual logic)
-            ssh_client = paramiko.SSHClient()
-            ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-
-            # Replace 'your_ssh_key' with the actual path to your private key file
-            private_key_path = 'your_ssh_key'
-            ssh_client.connect(node_to_assign.ip_address, username='your_ssh_username', key_filename=private_key_path)
-
-            # Perform actions with the SSH connection (replace this with your actual logic)
-
-            ssh_client.close()
-
-            return redirect('success_page')  # Redirect to a success page
+            # Redirect to the key_success page
+            return redirect('key_success')
 
     # Render the form with the clients without credentials and all KeyRequests
     return render(request, 'add_node.html', {'clients_without_credentials': clients_without_credentials, 'all_key_requests': all_key_requests, 'key_request_status': key_request_status})
+
+
+def key_success(request):
+    # Retrieve success message from the session
+    success_message = request.session.pop('success_message', None)
+    
+    # Pass the success message to the template
+    return render(request, 'key_success.html', {'success_message': success_message})

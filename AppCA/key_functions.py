@@ -20,8 +20,8 @@ def generateRandomNIdNumeral(n):
             # ID is unique, add to the set
             generated_ids.add(new_id)
 
-    with open("node_desc_id.txt", 'w') as file:
-        file.write('\n'.join(generated_ids))
+    # with open("node_desc_id.txt", 'w') as file:
+    #     file.write('\n'.join(generated_ids))
 
     # Add the generated strings to the Node table
     for generated_id in generated_ids:
@@ -50,8 +50,8 @@ def generateRandomNId(n):
             # ID is unique, add to the set
             generated_ids.add(new_id)
 
-    with open("node_desc_id.txt", 'w') as file:
-        file.write('\n'.join(generated_ids))
+    # with open("node_desc_id.txt", 'w') as file:
+    #     file.write('\n'.join(generated_ids))
 
     # Add the generated strings to the Node table
     for generated_id in generated_ids:
@@ -83,9 +83,9 @@ def generateSequenceNId(n, first='0000'):
     # Generate n random strings of 4 numbers
     generated_ids = [str((int(first) + i) % 10000).zfill(4) for i in range(n)]
 
-    with open("node_desc_id.txt", 'w') as file:
-        # Write the generated IDs to the file
-        file.write('\n'.join(map(lambda x: str(x).zfill(4), generated_ids)))
+    # with open("node_desc_id.txt", 'w') as file:
+    #     # Write the generated IDs to the file
+    #     file.write('\n'.join(map(lambda x: str(x).zfill(4), generated_ids)))
 
     for generated_id in generated_ids:
         node = Node.objects.create(
@@ -164,6 +164,12 @@ def addNIdsFromFile(uploaded_file):
 
 # This function creates a file for nodes that want to register to the kgrd (n_id, ntag, and a list of other nodes that can be connected)
 def getNodeFile(n):
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    config_file_path = os.path.join(script_dir, 'ca_config.ini')
+
+    config = configparser.ConfigParser()
+    config.read(config_file_path)
+    available_nodes = config['ca']['available_nodes']
     print("getNodeFile")
     try:
         # Get the node which wants to get available connections and find it's generation id
@@ -176,7 +182,8 @@ def getNodeFile(n):
         # Extract the IDs from the queryset
         node_ids = [str(related_node.N_ID) for related_node in related_nodes]
 
-        with open("available_nodes.txt", 'w') as file:
+        with open(available_nodes, 'w', encoding='utf-8') as file:
+            # Use str() to ensure the content is a string before writing to the file
             file.write(f"{node.N_ID} {node.NTAG}\n")
             file.write('\n'.join(node_ids))
 
